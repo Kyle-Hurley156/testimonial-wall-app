@@ -5,125 +5,209 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 20px auto; }
-        h1, h2 { color: #1e293b; }
-        .card { background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 25px; }
-        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; font-weight: 500; }
-        .btn-approve { background-color: #22c55e; color: white; }
-        .btn-hide { background-color: #f59e0b; color: white; margin-left: 10px; }
-        .btn-delete { background-color: #ef4444; color: white; margin-left: 10px; }
-        .btn-main { background-color: #4f46e5; color: white; padding: 10px 18px; font-size: 16px; }
-        .logout-link { color: #64748b; text-decoration: none; float: right; }
-        .flash-message { padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-        .flash-success { background-color: #dcfce7; color: #166534; }
-        .flash-error { background-color: #fee2e2; color: #991b1b; }
-        .link-box { display: flex; align-items: center; gap: 10px; }
-        .link-box input { flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background-color: #f8fafc; }
-        .copy-btn { background-color: #e2e8f0; border: 1px solid #cbd5e1; padding: 8px 12px; }
-        .testimonial-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .testimonial-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .author-name { font-size: 1.2em; font-weight: 600; }
-        .status { padding: 5px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; text-transform: uppercase; }
-        .status-pending { background-color: #fefce8; color: #854d0e; }
-        .status-approved { background-color: #f0fdf4; color: #15803d; }
-        .status-hidden { background-color: #f1f5f9; color: #475569; }
-        .testimonial-content { color: #4a5568; line-height: 1.6; }
-        .actions { margin-top: 15px; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; font-size: 16px; }
-        textarea { resize: vertical; min-height: 80px; }
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --light-gray: #f3f4f6;
+            --medium-gray: #e5e7eb;
+            --dark-gray: #374151;
+            --text-color: #111827;
+            --success-bg: #ecfdf5;
+            --success-text: #065f46;
+            --error-bg: #fef2f2;
+            --error-text: #991b1b;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-weight: 700; font-size: 1.25rem; color: var(--text-color); text-decoration: none; }
+        .nav-links a {
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 1.5rem;
+            transition: color 0.2s ease;
+        }
+        .nav-links a:hover { color: var(--primary-color); }
+        .container { max-width: 900px; margin: 2.5rem auto; padding: 0 1rem; }
+        .flash-success, .flash-error { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .flash-success { background-color: var(--success-bg); color: var(--success-text); }
+        .flash-error { background-color: var(--error-bg); color: var(--error-text); }
+        .card {
+            background-color: #fff;
+            border: 1px solid var(--medium-gray);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.07);
+        }
+        h1, h2 { color: var(--text-color); border: none; }
+        h2 { font-size: 1.5rem; margin-top: 0; }
+        p { color: #4b5563; line-height: 1.6; }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: var(--light-gray); border: 1px solid var(--medium-gray); color: var(--dark-gray); padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; font-weight: 500; transition: background-color 0.2s ease; }
+        .btn-secondary:hover { background-color: #e5e7eb; }
+        .testimonial-card {
+            border: 1px solid var(--medium-gray);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            transition: box-shadow 0.2s ease;
+        }
+        .testimonial-card:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07); }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .author-name { font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
+        .status { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-left: 0.75rem; }
+        .status-pending { background-color: #fef9c3; color: #854d0e; }
+        .status-approved { background-color: #dcfce7; color: #166534; }
+        .status-hidden { background-color: #f3f4f6; color: #4b5563; }
+        .item-rating { color: #f59e0b; font-size: 1rem; margin-bottom: 0.75rem; }
+        .testimonial-content p { color: #374151; line-height: 1.6; margin: 0; }
+        .actions { margin-top: 1rem; }
+        .actions a { margin-right: 0.75rem; color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .actions a:hover { text-decoration: underline; }
+        .btn-delete { color: #ef4444; }
+        .settings-form label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark-gray); }
+        .settings-form input, .settings-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--medium-gray);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .settings-form input:focus, .settings-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+        .link-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--medium-gray);
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            color: var(--dark-gray);
+            font-family: monospace;
+        }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <a href="{{ url_for('logout') }}" class="logout-link">Log Out</a>
-        <h1>Dashboard</h1>
 
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard') }}" class="logo">Testimonial Wall</a>
+        <div class="nav-links">
+            <a href="{{ url_for('manage_subscription') }}">Billing</a>
+            <a href="{{ url_for('logout') }}">Log Out</a>
+        </div>
+    </nav>
+
+    <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    <div class="flash-{{ category }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
         {% if current_user.subscription_status != 'active' %}
-            <div class="card">
+            <div class="card" style="text-align: center;">
                 <h2>Activate Your Account</h2>
-                <p>To get your public wall and submission links, please subscribe.</p>
-                <form action="{{ url_for('create_checkout_session') }}">
-                    <button class="btn-main">Subscribe Now</button>
-                </form>
+                <p>Subscribe to start collecting and displaying testimonials on your website.</p>
+                <a href="{{ url_for('create_checkout_session') }}" class="btn-primary">Subscribe Now - $15/month</a>
             </div>
         {% else %}
             <div class="card">
-                <h2>Your Links</h2>
-                <div class="link-item">
-                    <label for="submission-link">Your Submission Link</label>
-                    <div class="link-box">
-                        <input type="text" value="{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}" readonly id="submission-link">
-                        <button class="copy-btn" onclick="copyToClipboard('submission-link')">Copy</button>
-                    </div>
+                <h2>Account Active</h2>
+                <p>Use these links to collect testimonials and display your wall. You can manage your subscription in the Billing portal.</p>
+                <div style="margin-bottom: 1rem;">
+                    <strong>Your Public Submission Link:</strong>
+                    <input type="text" class="link-input" value="{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}" readonly>
                 </div>
-                 <div class="link-item" style="margin-top: 20px;">
-                    <label for="wall-url">Your Public Wall URL</label>
-                    <div class="link-box">
-                        <input type="text" value="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" readonly id="wall-url">
-                        <button class="copy-btn" onclick="copyToClipboard('wall-url')">Copy</button>
-                    </div>
+                <div>
+                    <strong>Your Public Wall URL:</strong>
+                    <input type="text" class="link-input" value="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" readonly>
                 </div>
-            </div>
-
-            <!-- NEW WALL SETTINGS FORM -->
-            <div class="card">
-                <h2>Wall Settings</h2>
-                <form action="{{ url_for('update_wall_settings') }}" method="POST">
-                    <label for="wall_title">Wall Title</label>
-                    <input type="text" id="wall_title" name="wall_title" value="{{ current_user.wall_title or '' }}" placeholder="e.g., What Our Customers Say">
-
-                    <label for="wall_description">Wall Description</label>
-                    <textarea id="wall_description" name="wall_description" placeholder="e.g., We're proud to have the best customers in the world!">{{ current_user.wall_description or '' }}</textarea>
-
-                    <button type="submit" class="btn-main">Save Settings</button>
-                </form>
             </div>
         {% endif %}
 
-        <h2>Manage Testimonials</h2>
+        <div class="card">
+            <h2>Wall Settings</h2>
+            <form action="{{ url_for('update_wall_settings') }}" method="POST" class="settings-form">
+                <label for="wall_title">Wall Title</label>
+                <input type="text" id="wall_title" name="wall_title" value="{{ current_user.wall_title or '' }}" placeholder="e.g., What Our Customers Say">
+
+                <label for="wall_description">Wall Description</label>
+                <textarea id="wall_description" name="wall_description" placeholder="e.g., We're proud to have the best customers in the world.">{{ current_user.wall_description or '' }}</textarea>
+
+                <button type="submit" class="btn-primary">Save Settings</button>
+            </form>
+        </div>
+
+        <h2>Your Testimonials</h2>
         {% for testimonial in testimonials %}
-            <div class="testimonial-card">
-                <div class="testimonial-header">
-                    <span class="author-name">{{ testimonial.author_name }}</span>
-                    {% if testimonial.status == 'approved' %}
-                        <span class="status status-approved">Approved</span>
-                    {% elif testimonial.status == 'hidden' %}
-                        <span class="status status-hidden">Hidden</span>
-                    {% else %}
-                        <span class="status status-pending">Pending</span>
-                    {% endif %}
-                </div>
-                <div class="testimonial-content"><p>"{{ testimonial.content }}"</p></div>
-                <div class="actions">
-                    <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-approve">Approve</a>
-                    <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-hide">Hide</a>
-                    <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-delete">Delete</a>
+        <div class="testimonial-card">
+            <div class="testimonial-header">
+                <span class="author-name">{{ testimonial.author_name }}</span>
+                <div>
+                    {% if testimonial.status == 'approved' %}<span class="status status-approved">Approved</span>
+                    {% elif testimonial.status == 'pending' %}<span class="status status-pending">Pending</span>
+                    {% else %}<span class="status status-hidden">Hidden</span>{% endif %}
                 </div>
             </div>
+            {% if testimonial.rating %}
+            <div class="item-rating">
+                {% for i in range(testimonial.rating) %}&#9733;{% endfor %}{% for i in range(5 - testimonial.rating) %}<span style="color: #ddd;">&#9733;</span>{% endfor %}
+            </div>
+            {% endif %}
+            <div class="testimonial-content">
+                <p>"{{ testimonial.content }}"</p>
+            </div>
+            <div class="actions">
+                <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}">Approve</a>
+                <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}">Hide</a>
+                <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn-delete">Delete</a>
+            </div>
+        </div>
         {% else %}
-            <p>No testimonials submitted yet.</p>
+        <div class="card" style="text-align: center;">
+            <p>No testimonials yet. Share your submission link to get started!</p>
+        </div>
         {% endfor %}
     </div>
 
-    <script>
-        function copyToClipboard(elementId) {
-            const input = document.getElementById(elementId);
-            input.select();
-            input.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-            alert('Copied to clipboard!');
-        }
-    </script>
 </body>
 </html>
 

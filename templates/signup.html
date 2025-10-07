@@ -3,49 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account</title>
+    <title>Create Your Account</title>
     <style>
-        /* Shared styles for a clean authentication form */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h1 { text-align: center; color: #1a202c; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; }
-        input[type="email"], input[type="password"] { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; background-color: #4299e1; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 600; }
-        button:hover { background-color: #2b6cb0; }
-        .footer-link { text-align: center; margin-top: 20px; }
-        .footer-link a { color: #4299e1; text-decoration: none; }
-        /* Style for our error messages */
-        .flash-error { padding: 15px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; margin-bottom: 20px; text-align: center; }
+        :root { --primary-color: #4f46e5; --primary-hover: #4338ca; --light-gray: #f3f4f6; --medium-gray: #d1d5db; --text-color: #111827; --error-bg: #fef2f2; --error-text: #991b1b; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--light-gray); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .auth-container { background-color: #fff; padding: 2.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        .auth-container h1 { text-align: center; color: var(--text-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.75rem; }
+        .flash-error { background-color: var(--error-bg); color: var(--error-text); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; }
+        input[type="email"], input[type="password"] { width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border-radius: 0.5rem; border: 1px solid var(--medium-gray); box-sizing: border-box; font-size: 1rem; }
+        input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); }
+        button { width: 100%; background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.2s ease; }
+        button:hover { background-color: var(--primary-hover); }
+        .footer-link { text-align: center; margin-top: 1.5rem; color: #4b5563; }
+        .footer-link a { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .footer-link a:hover { text-decoration: underline; }
     </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Create Account</h1>
-        
-        <!-- THIS BLOCK IS THE FIX: It will display any error messages -->
-        {% with messages = get_flashed_messages(category_filter=['error']) %}
+    <div class="auth-container">
+        <h1>Create Your Account</h1>
+         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for message in messages %}
-                    <div class="flash-error">
-                        {{ message }}
-                    </div>
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                    <div class="flash-error">{{ message }}</div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% endwith %}
-
-        <form action="{{ url_for('signup') }}" method="POST">
+        <form method="POST" action="{{ url_for('signup') }}">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required>
-
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
-
             <button type="submit">Sign Up</button>
         </form>
-        <div class="footer-link">
-            <p>Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
-        </div>
+        <p class="footer-link">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
     </div>
 </body>
 </html>

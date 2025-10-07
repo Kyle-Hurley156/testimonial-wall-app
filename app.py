@@ -1,7 +1,6 @@
 import os
 import stripe
 from flask import Flask, render_template, request, redirect, url_for, flash
-# --- NEW: Import the Migrate class ---
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -11,7 +10,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-very-secret-and-secure-key-for-dev')
 basedir = os.path.abspath(os.path.dirname(__file__))
-# Fallback for local development
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'testimonials.db'))
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
@@ -26,9 +24,7 @@ app.config['STRIPE_PRICE_ID'] = os.getenv('STRIPE_PRICE_ID', 'price_1SFS8p3toE0K
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 db = SQLAlchemy(app)
-# --- NEW: Initialize Flask-Migrate ---
 migrate = Migrate(app, db)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -42,10 +38,11 @@ class User(UserMixin, db.Model):
     testimonials = db.relationship('Testimonial', backref='owner', lazy=True, cascade="all, delete-orphan")
     wall_title = db.Column(db.String(100), nullable=True)
     wall_description = db.Column(db.Text, nullable=True)
+    # --- NEW: Add Stripe Customer ID ---
+    stripe_customer_id = db.Column(db.String(100), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -55,10 +52,9 @@ class Testimonial(db.Model):
     content = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), default='pending', nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # --- NEW: Add rating column ---
-    rating = db.Column(db.Integer, nullable=True) # Storing rating out of 5
+    rating = db.Column(db.Integer, nullable=True)
 
-# ... The rest of your routes are unchanged ...
+# --- ROUTES ---
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -77,9 +73,7 @@ def submit_for_user(user_id):
     user = User.query.get_or_404(user_id)
     name = request.form['author_name']
     text = request.form['content']
-    # --- NEW: Get rating from form ---
     rating = request.form.get('rating')
-    # --- NEW: Add rating to the new testimonial ---
     new_testimonial = Testimonial(author_name=name, content=text, rating=rating, owner=user)
     db.session.add(new_testimonial)
     db.session.commit()
@@ -96,13 +90,22 @@ def signup():
         if user:
             flash('Email address already exists.', 'error')
             return redirect(url_for('signup'))
-        new_user = User(email=email)
+
+        # --- NEW: Create a customer in Stripe ---
+        try:
+            customer = stripe.Customer.create(email=email)
+        except Exception as e:
+            flash(f"Could not create Stripe customer: {e}", "error")
+            return redirect(url_for('signup'))
+
+        new_user = User(email=email, stripe_customer_id=customer.id)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
         return redirect(url_for('dashboard'))
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -134,14 +137,13 @@ def dashboard():
 @app.route('/update_wall_settings', methods=['POST'])
 @login_required
 def update_wall_settings():
-    title = request.form.get('wall_title')
-    description = request.form.get('wall_description')
-    current_user.wall_title = title
-    current_user.wall_description = description
+    current_user.wall_title = request.form.get('wall_title')
+    current_user.wall_description = request.form.get('wall_description')
     db.session.commit()
     flash('Your wall settings have been updated!', 'success')
     return redirect(url_for('dashboard'))
 
+# ... approve, hide, delete routes ...
 @app.route('/approve/<int:testimonial_id>')
 @login_required
 def approve_testimonial(testimonial_id):
@@ -170,16 +172,18 @@ def delete_testimonial(testimonial_id):
     flash('Testimonial has been deleted.', 'success')
     return redirect(url_for('dashboard'))
 
+# --- STRIPE & BILLING ROUTES ---
 @app.route('/create-checkout-session')
 @login_required
 def create_checkout_session():
     try:
         checkout_session = stripe.checkout.Session.create(
+            # --- UPDATED: Pass the customer ID ---
+            customer=current_user.stripe_customer_id,
             line_items=[{'price': app.config['STRIPE_PRICE_ID'], 'quantity': 1}],
             mode='subscription',
-            success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            success_url=url_for('success', _external=True),
             cancel_url=url_for('cancel', _external=True),
-            client_reference_id=current_user.id
         )
     except Exception as e: return str(e)
     return redirect(checkout_session.url, code=303)
@@ -196,12 +200,19 @@ def success():
 def cancel():
     return render_template('cancel.html')
 
+# --- NEW: Route to the Stripe Customer Portal ---
+@app.route('/manage-subscription')
+@login_required
+def manage_subscription():
+    portal_session = stripe.billing_portal.Session.create(
+        customer=current_user.stripe_customer_id,
+        return_url=url_for('dashboard', _external=True)
+    )
+    return redirect(portal_session.url, code=303)
+
 @app.route('/wall/<int:user_id>')
 def show_wall(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template('wall.html', testimonials=user.testimonials, user=user)
-
-# NOTE: We no longer need db.create_all() here. Migrations will handle it.
-# if __name__ == '__main__':
-#     app.run(debug=True)
+    approved_testimonials = Testimonial.query.filter_by(owner=user, status='approved').order_by(Testimonial.id.desc()).all()
+    return render_template('wall.html', testimonials=approved_testimonials, user=user)
 
