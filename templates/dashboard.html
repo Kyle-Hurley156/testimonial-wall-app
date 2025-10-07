@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        h1 { color: #1a202c; margin: 0; }
+        .btn-logout { background-color: #64748b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 14px; }
+        .btn-logout:hover { background-color: #475569; }
+        
+        .links-section, .subscribe-section { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-top: 20px; }
+        .links-section h2, .subscribe-section h2 { margin-top: 0; color: #334155; }
+        .link-box { background-color: #e2e8f0; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 14px; color: #1e293b; white-space: pre-wrap; word-wrap: break-word; margin-bottom: 10px; }
+        .link-box-label { font-weight: 600; margin-bottom: 5px; }
+
+        .btn-subscribe { display: inline-block; background-color: #16a34a; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: 600; font-size: 16px; }
+        .btn-subscribe:hover { background-color: #15803d; }
+
+        .testimonial-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; margin-top: 20px; }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .author-name { font-size: 1.2em; font-weight: 600; }
+        .status { padding: 5px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 500; text-transform: uppercase; }
+        .status-pending { background-color: #fefcbf; color: #92400e; }
+        .status-approved { background-color: #d1fae5; color: #065f46; }
+        .status-hidden { background-color: #e5e7eb; color: #374151; }
+        .testimonial-content { color: #4a5568; line-height: 1.6; }
+        .actions { margin-top: 15px; display: flex; justify-content: flex-end; align-items: center; }
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; margin-left: 10px; }
+        .btn-approve { background-color: #34d399; color: white; }
+        .btn-hide { background-color: #f59e0b; color: white; }
+        .btn-delete { background-color: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Testimonial Dashboard</h1>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+
+        <!-- This is the gating logic. We check the user's subscription status. -->
+        {% if current_user.subscription_status == 'active' %}
+            <!-- If active, show them their links. -->
+            <div class="links-section">
+                <h2>Your Links</h2>
+                <p class="link-box-label">Your Public Testimonial Wall URL:</p>
+                <div class="link-box">{{ request.host_url }}wall/{{ current_user.id }}</div>
+                <p class="link-box-label">Embed this code on your website:</p>
+                <div class="link-box">&lt;iframe src="{{ request.host_url }}wall/{{ current_user.id }}" width="100%" height="600px" frameborder="0"&gt;&lt;/iframe&gt;</div>
+            </div>
+        {% else %}
+            <!-- If inactive, show them the subscribe section. -->
+            <div class="subscribe-section">
+                <h2>Activate Your Account</h2>
+                <p>To get your public wall URL and embed code, please subscribe to a plan.</p>
+                <a href="{{ url_for('create_checkout_session') }}" class="btn-subscribe">Subscribe Now</a>
+            </div>
+        {% endif %}
+
+        {% for testimonial in testimonials %}
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <span class="author-name">{{ testimonial.author_name }}</span>
+                    {% if testimonial.status == 'approved' %}
+                        <span class="status status-approved">Approved</span>
+                    {% elif testimonial.status == 'pending' %}
+                        <span class="status status-pending">Pending</span>
+                    {% elif testimonial.status == 'hidden' %}
+                        <span class="status status-hidden">Hidden</span>
+                    {% endif %}
+                </div>
+                <div class="testimonial-content">
+                    <p>"{{ testimonial.content }}"</p>
+                </div>
+                <div class="actions">
+                    <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-approve">Approve</a>
+                    <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-hide">Hide</a>
+                    <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn-delete btn">Delete</a>
+                </div>
+            </div>
+        {% else %}
+            <p style="margin-top: 20px;">No testimonials submitted yet. Go to <a href="/submit_page">submit one</a>!</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
+

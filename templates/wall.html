@@ -1,0 +1,87 @@
+<!-- templates/wall.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Wall of Love</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff; /* Make it transparent for embedding if needed later */
+            color: #333;
+            margin: 0;
+            padding: 40px 20px; /* Add some padding */
+        }
+        .wall-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            /* Create a responsive grid */
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .testimonial-item {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+        }
+        .item-content {
+            font-size: 1.1em;
+            color: #1e293b;
+            line-height: 1.6;
+            flex-grow: 1; /* Makes content take up available space */
+            margin-bottom: 20px;
+        }
+        .item-content::before {
+            content: '“';
+            font-size: 3em;
+            color: #cbd5e1;
+            font-weight: 800;
+            float: left;
+            margin-top: -10px;
+            margin-right: 5px;
+            height: 0.5em;
+        }
+        .item-author {
+            font-size: 1em;
+            font-weight: 600;
+            color: #0f172a;
+            text-align: right;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+        .no-testimonials {
+            text-align: center;
+            width: 100%;
+            grid-column: 1 / -1; /* Make it span all columns */
+            padding: 50px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="wall-container">
+        <!-- Loop through the 'approved' testimonials passed from app.py -->
+        {% for testimonial in testimonials %}
+            <div class="testimonial-item">
+                <div class="item-content">
+                    {{ testimonial.content }}
+                </div>
+                <div class="item-author">
+                    – {{ testimonial.author_name }}
+                </div>
+            </div>
+        {% else %}
+            <!-- Show this message if there are no approved testimonials -->
+            <div class="no-testimonials">
+                <h2>We're collecting testimonials! Check back soon.</h2>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
