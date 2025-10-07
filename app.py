@@ -66,7 +66,7 @@ def signup():
         
         user = User.query.filter_by(email=email).first()
         if user:
-            flash('Email address already exists.')
+            flash('Email address already exists.', 'error')
             return redirect(url_for('signup'))
 
         new_user = User(email=email)
@@ -90,7 +90,7 @@ def login():
         user = User.query.filter_by(email=email).first()
         
         if not user or not user.check_password(password):
-            flash('Please check your login details and try again.')
+            flash('Please check your login details and try again.', 'error')
             return redirect(url_for('login'))
         
         login_user(user)
@@ -202,4 +202,5 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=False)
+
 
