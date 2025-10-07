@@ -1,87 +1,56 @@
-<!-- templates/wall.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Wall of Love</title>
+    <title>{{ user.wall_title or 'Testimonials' }}</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #ffffff; /* Make it transparent for embedding if needed later */
-            color: #333;
-            margin: 0;
-            padding: 40px 20px; /* Add some padding */
-        }
-        .wall-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            /* Create a responsive grid */
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-        }
-        .testimonial-item {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-        }
-        .item-content {
-            font-size: 1.1em;
-            color: #1e293b;
-            line-height: 1.6;
-            flex-grow: 1; /* Makes content take up available space */
-            margin-bottom: 20px;
-        }
-        .item-content::before {
-            content: '“';
-            font-size: 3em;
-            color: #cbd5e1;
-            font-weight: 800;
-            float: left;
-            margin-top: -10px;
-            margin-right: 5px;
-            height: 0.5em;
-        }
-        .item-author {
-            font-size: 1em;
-            font-weight: 600;
-            color: #0f172a;
-            text-align: right;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 15px;
-        }
-        .no-testimonials {
-            text-align: center;
-            width: 100%;
-            grid-column: 1 / -1; /* Make it span all columns */
-            padding: 50px;
-            color: #64748b;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #333; margin: 0; padding: 40px 20px; }
+        .header-section { text-align: center; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .header-section h1 { font-size: 2.5em; color: #1e293b; margin-bottom: 10px; }
+        .header-section p { font-size: 1.1em; color: #475569; line-height: 1.6; margin-bottom: 30px; }
+        .btn-add-testimonial { background-color: #4f46e5; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1em; display: inline-block; transition: background-color 0.2s; }
+        .btn-add-testimonial:hover { background-color: #4338ca; }
+        .wall-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .testimonial-item { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column; }
+        /* New Styles for Displaying Stars */
+        .item-rating { color: #f5b301; font-size: 1.2em; margin-bottom: 15px; }
+        .item-content { font-size: 1.1em; color: #1e293b; line-height: 1.6; flex-grow: 1; margin-bottom: 20px; }
+        .item-content::before { content: '“'; font-size: 3em; color: #cbd5e1; font-weight: 800; float: left; margin-top: -10px; margin-right: 5px; height: 0.5em; }
+        .item-author { font-size: 1em; font-weight: 600; color: #0f172a; text-align: right; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .no-testimonials { text-align: center; width: 100%; grid-column: 1 / -1; padding: 50px; color: #64748b; }
     </style>
 </head>
 <body>
+    <div class="header-section">
+        <h1>{{ user.wall_title or 'What Our Customers Say' }}</h1>
+        {% if user.wall_description %}
+            <p>{{ user.wall_description }}</p>
+        {% endif %}
+        <a href="{{ url_for('collect_testimonial', user_id=user.id) }}" class="btn-add-testimonial">Add Your Testimonial</a>
+    </div>
     <div class="wall-container">
-        <!-- Loop through the 'approved' testimonials passed from app.py -->
         {% for testimonial in testimonials %}
-            <div class="testimonial-item">
-                <div class="item-content">
-                    {{ testimonial.content }}
+            {% if testimonial.status == 'approved' %}
+                <div class="testimonial-item">
+                    <!-- New Star Display -->
+                    {% if testimonial.rating %}
+                    <div class="item-rating">
+                        {% for i in range(testimonial.rating) %}&#9733;{% endfor %}{% for i in range(5 - testimonial.rating) %}<span style="color: #ddd;">&#9733;</span>{% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="item-content">{{ testimonial.content }}</div>
+                    <div class="item-author">– {{ testimonial.author_name }}</div>
                 </div>
-                <div class="item-author">
-                    – {{ testimonial.author_name }}
-                </div>
-            </div>
-        {% else %}
-            <!-- Show this message if there are no approved testimonials -->
-            <div class="no-testimonials">
-                <h2>We're collecting testimonials! Check back soon.</h2>
-            </div>
+            {% endif %}
         {% endfor %}
+        {% set approved_count = testimonials|selectattr('status', 'equalto', 'approved')|list|length %}
+        {% if approved_count == 0 %}
+            <div class="no-testimonials">
+                <h2>Be the first to leave a testimonial!</h2>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>
+
