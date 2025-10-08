@@ -3,222 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Dashboard</title>
+    <title>Dashboard</title>
     <style>
         :root {
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --light-gray: #f9fafb;
-            --medium-gray: #e5e7eb;
-            --dark-gray: #374151;
-            --text-color: #111827;
-            --success-bg: #f0fdf4;
-            --success-text: #166534;
-            --error-bg: #fef2f2;
-            --error-text: #991b1b;
+            --primary-color: #4338ca;
+            --primary-hover: #3730a3;
+            --secondary-color: #e2e8f0;
+            --secondary-hover: #cbd5e1;
+            --danger-color: #dc2626;
+            --danger-hover: #b91c1c;
+            --success-color: #16a34a;
+            --success-hover: #15803d;
+            --warning-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
         }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            margin: 0;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-        .header {
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-primary); margin: 0; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .dashboard-header {
             display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            /* This is the fix for mobile */
-            flex-wrap: wrap;
-            gap: 1rem;
+            gap: 15px; /* Adds space between items */
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
         }
-        .header h1 {
-            font-size: 2.25rem;
-            margin: 0;
-            font-weight: 800;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .btn {
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        .btn-secondary { background-color: #fff; color: var(--dark-gray); border: 1px solid var(--medium-gray); }
-        .btn-secondary:hover { background-color: var(--light-gray); }
-        .btn-logout { background-color: #f87171; color: white; border: 1px solid #f87171; }
-        .btn-logout:hover { background-color: #ef4444; }
-        .btn-primary { background-color: var(--primary-color); color: white; border: 1px solid var(--primary-color); }
+        .header-title h1 { margin: 0; font-size: 1.8em; }
+        .header-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn, .btn-logout { text-decoration: none; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; font-size: 0.9em; text-align: center; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-primary:hover { background-color: var(--primary-hover); }
-
-        .card {
-            background-color: #fff;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px 0 rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-        }
-        .card h2 { margin-top: 0; font-size: 1.5rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--medium-gray);
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); }
-
-        .flash-message { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-        .flash-success { background-color: var(--success-bg); color: var(--success-text); }
-        .flash-error { background-color: var(--error-bg); color: var(--error-text); }
+        .btn-secondary { background-color: var(--secondary-color); color: var(--text-primary); }
+        .btn-secondary:hover { background-color: var(--secondary-hover); }
+        .btn-logout { background-color: var(--danger-color); color: white; }
+        .btn-logout:hover { background-color: var(--danger-hover); }
         
-        .testimonial-list-header { margin-bottom: 1rem; }
-        .testimonial-card { border: 1px solid var(--medium-gray); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem; background-color: #fff;}
-        .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;}
-        .author-name { font-size: 1.1rem; font-weight: 600; }
-        .status { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; white-space: nowrap;}
-        .status-pending { background-color: #fefce8; color: #a16207; }
-        .status-approved { background-color: #f0fdf4; color: #166534; }
-        .status-hidden { background-color: #f1f5f9; color: #475569; }
-        .testimonial-content { color: #4b5563; line-height: 1.6; margin-bottom: 1.5rem; font-style: italic; }
-        .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-        .link-group { display: flex; align-items: center; gap: 0.5rem; }
-        .link-input { flex-grow: 1; background-color: var(--light-gray); cursor: text;}
+        .alert { padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid transparent; }
+        .alert-error { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        .alert-success { background-color: #dcfce7; color: #14532d; border-color: #bbf7d0; }
+
+        .links-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+        .links-section h2 { margin-top: 0; }
+        .link-box { background-color: #f1f5f9; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', Courier, monospace; word-wrap: break-word; }
+        
+        .testimonial-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 20px; background-color: var(--card-bg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05); }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .author-name { font-size: 1.25em; font-weight: 600; color: var(--text-primary); }
+        .status { padding: 5px 12px; border-radius: 9999px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; }
+        .status-pending { background-color: var(--warning-color); color: white; }
+        .status-approved { background-color: var(--success-color); color: white; }
+        .status-hidden { background-color: #94a3b8; color: white; }
+        .testimonial-content p { color: var(--text-secondary); line-height: 1.6; margin: 0; }
+        .actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background-color: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--text-secondary); }
+        .modal h2 { margin-top: 0; }
+        .modal p { line-height: 1.6; color: var(--text-secondary); }
+        .modal ol { padding-left: 20px; }
+        .modal code { background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; }
+
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Dashboard</h1>
+        <div class="dashboard-header">
+            <div class="header-title">
+                <h1>Dashboard</h1>
+            </div>
             <div class="header-actions">
+                <button id="embed-instructions-btn" class="btn btn-secondary">How to Embed</button>
                 <a href="{{ url_for('manage_subscription') }}" class="btn btn-secondary">Manage Billing</a>
-                <a href="{{ url_for('logout') }}" class="btn btn-logout">Log Out</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Log Out</a>
             </div>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
         {% if current_user.subscription_status != 'active' %}
-        <div class="card">
-            <h2>Activate Your Account to Get Your Links</h2>
-            <p>Your subscription is inactive. Subscribe now to start sharing your testimonial collection page and display your wall.</p>
+        <div class="links-section">
+            <h2>Activate Your Account</h2>
+            <p>To get your links and display testimonials, please subscribe.</p>
             <a href="{{ url_for('create_checkout_session') }}" class="btn btn-primary">Subscribe Now</a>
         </div>
         {% else %}
-        <!-- THIS IS THE NEW SECTION -->
-        <div class="card">
+        <div class="links-section">
             <h2>Your Links</h2>
-            <div class="form-group">
-                <label for="wall-url">Your Public Wall URL</label>
-                <div class="link-group">
-                    <input type="text" id="wall-url" class="link-input" value="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" readonly>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('wall-url')">Copy</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="collection-url">Your Shareable Collection Link</label>
-                <div class="link-group">
-                    <input type="text" id="collection-url" class="link-input" value="{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}" readonly>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('collection-url')">Copy</button>
-                </div>
-            </div>
+            <p><strong>Your Public Wall URL:</strong></p>
+            <div class="link-box">{{ url_for('show_wall', user_id=current_user.id, _external=True) }}</div>
+            <p><strong>Your Collection Link (Send to clients):</strong></p>
+            <div class="link-box" id="submission-link">{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}</div>
         </div>
-        <!-- END OF NEW SECTION -->
         {% endif %}
-
-        <div class="card">
-            <h2>Wall Settings</h2>
-            <form action="{{ url_for('update_wall_settings') }}" method="POST">
-                <div class="form-group">
-                    <label for="wall_title">Wall Title</label>
-                    <input type="text" id="wall_title" name="wall_title" value="{{ current_user.wall_title or '' }}" placeholder="e.g., What Our Customers Say">
-                </div>
-                <div class="form-group">
-                    <label for="wall_description">Wall Description</label>
-                    <textarea id="wall_description" name="wall_description" rows="3" placeholder="e.g., We love our customers, and they love us. Here's what they have to say!">{{ current_user.wall_description or '' }}</textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Settings</button>
-            </form>
-        </div>
         
-        <div class="card">
-            <div class="testimonial-list-header">
-                <h2>Your Testimonials</h2>
+        <!-- Testimonials List -->
+        {% for testimonial in testimonials %}
+        <div class="testimonial-card">
+            <div class="testimonial-header">
+                <span class="author-name">{{ testimonial.author_name }}</span>
+                {% if testimonial.status == 'approved' %}
+                    <span class="status status-approved">Approved</span>
+                {% elif testimonial.status == 'hidden' %}
+                    <span class="status status-hidden">Hidden</span>
+                {% else %}
+                    <span class="status status-pending">Pending</span>
+                {% endif %}
             </div>
-            {% for testimonial in testimonials %}
-            <div class="testimonial-card">
-                <div class="testimonial-header">
-                    <span class="author-name">{{ testimonial.author_name }}</span>
-                    {% if testimonial.status == 'approved' %}
-                        <span class="status status-approved">Approved</span>
-                    {% elif testimonial.status == 'hidden' %}
-                        <span class="status status-hidden">Hidden</span>
-                    {% else %}
-                        <span class="status status-pending">Pending</span>
-                    {% endif %}
-                </div>
-                <div class="testimonial-content">
-                    "{{ testimonial.content }}"
-                </div>
-                <div class="actions">
-                    <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Approve</a>
-                    <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Hide</a>
-                    <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-logout">Delete</a>
-                </div>
+            <div class="testimonial-content">
+                <p>"{{ testimonial.content }}"</p>
             </div>
-            {% else %}
-            <p>You haven't received any testimonials yet.</p>
-            {% endfor %}
+            <div class="actions">
+                <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Approve</a>
+                <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Hide</a>
+                <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn-logout">Delete</a>
+            </div>
+        </div>
+        {% else %}
+        <p>No testimonials submitted yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Embed Instructions Modal -->
+    <div id="embed-modal" class="modal-overlay">
+        <div class="modal">
+            <button id="close-modal-btn" class="modal-close">&times;</button>
+            <h2>How to Embed Your Testimonial Wall</h2>
+            <p>Displaying your wall on your website is like embedding a YouTube video. You just need to copy one line of code and paste it into your website's editor.</p>
+            <ol>
+                <li>
+                    <strong>Copy Your Embed Code:</strong> Below is the single line of code you need.
+                    <div class="link-box">
+                        <code>&lt;iframe src="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" width="100%" height="600px" style="border:none;"&gt;&lt;/iframe&gt;</code>
+                    </div>
+                </li>
+                <li>
+                    <strong>Go to Your Website Editor:</strong> Log in to your website's admin panel (e.g., WordPress, Squarespace, Wix, Shopify, etc.).
+                </li>
+                <li>
+                    <strong>Paste the Code:</strong> Find the page where you want the testimonials to appear. Add a "Custom HTML," "Embed," or "Code" block, and simply paste the code you copied. Save your changes.
+                </li>
+            </ol>
+            <p>That's it! Your beautiful wall of testimonials will now be live on your site.</p>
         </div>
     </div>
 
     <script>
-        function copyToClipboard(elementId) {
-            const input = document.getElementById(elementId);
-            input.select();
-            input.setSelectionRange(0, 99999); // For mobile devices
-            
-            // Use the modern clipboard API if available, with a fallback
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(input.value).then(() => {
-                    alert('Copied to clipboard!');
-                }).catch(err => {
-                    // Fallback for cases where clipboard API fails
-                    document.execCommand('copy');
-                    alert('Copied to clipboard!');
-                });
-            } else {
-                // Fallback for older browsers
-                document.execCommand('copy');
-                alert('Copied to clipboard!');
+        const embedBtn = document.getElementById('embed-instructions-btn');
+        const embedModal = document.getElementById('embed-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // Function to open the modal
+        const openModal = () => {
+            embedModal.style.display = 'flex';
+        };
+
+        // Function to close the modal
+        const closeModal = () => {
+            embedModal.style.display = 'none';
+        };
+
+        // Event Listeners
+        embedBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Also close modal if user clicks on the overlay
+        embedModal.addEventListener('click', (event) => {
+            if (event.target === embedModal) {
+                closeModal();
             }
-        }
+        });
     </script>
 </body>
 </html>
