@@ -1,66 +1,61 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Code Generator</title>
+    <title>Admin Panel - Smart Secure Reviews</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #1a202c; }
-        .btn { padding: 10px 20px; background-color: #4338ca; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e2e8f0; }
-        th { background-color: #f1f5f9; }
-        .status-active { color: #16a34a; }
-        .status-used { color: #64748b; }
+        :root { --primary-color: #4338ca; --primary-hover: #3730a3; --bg-color: #f8fafc; --card-bg: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b; --border-color: #e2e8f0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-primary); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 20px auto; }
+        .card { background-color: var(--card-bg); border-radius: 12px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        h1 { margin-top: 0; }
+        .btn { background-color: var(--primary-color); color: white; padding: 12px 25px; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn:hover { background-color: var(--primary-hover); }
         .alert-success { background-color: #dcfce7; color: #14532d; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-secondary); }
+        td code { background-color: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Lifetime Code Generator</h1>
+        <div class="card">
+            <h1>Admin Panel</h1>
+            <form action="" method="POST">
+                <button type="submit" class="btn">Generate New Lifetime Code</button>
+            </form>
+        </div>
         
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}{% if category == 'success' %}<div class="alert-success">{{ message }}</div>{% endif %}{% endfor %}{% endif %}{% endwith %}
 
-        <form method="POST">
-            <button type="submit" class="btn">Generate New Code</button>
-        </form>
-
-        <h2>Existing Codes</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Status</th>
-                    <th>Redeemed By User ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for code in codes %}
-                <tr>
-                    <td><strong>{{ code.code }}</strong></td>
-                    {% if code.is_active %}
-                        <td class="status-active">Active</td>
-                        <td>-</td>
+        <div class="card">
+            <h2>Generated Codes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Status</th>
+                        <th>Redeemed By User ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for code in codes %}
+                    <tr>
+                        <td><code>{{ code.code }}</code></td>
+                        <td>{{ "Active" if code.is_active else "Used" }}</td>
+                        <td>{{ code.redeemed_by_user_id or 'N/A' }}</td>
+                    </tr>
                     {% else %}
-                        <td class="status-used">Used</td>
-                        <td>{{ code.redeemed_by_user_id }}</td>
-                    {% endif %}
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="3">No codes generated yet.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    <tr>
+                        <td colspan="3">No codes generated yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
+

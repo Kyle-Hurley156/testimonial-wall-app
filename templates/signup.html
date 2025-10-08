@@ -3,46 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your Account</title>
+    <title>Sign Up - Smart Secure Reviews</title>
     <style>
-        :root { --primary-color: #4f46e5; --primary-hover: #4338ca; --light-gray: #f3f4f6; --medium-gray: #d1d5db; --text-color: #111827; --error-bg: #fef2f2; --error-text: #991b1b; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--light-gray); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .auth-container { background-color: #fff; padding: 2.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
-        .auth-container h1 { text-align: center; color: var(--text-color); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.75rem; }
-        .flash-error { background-color: var(--error-bg); color: var(--error-text); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; }
-        input[type="email"], input[type="password"] { width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border-radius: 0.5rem; border: 1px solid var(--medium-gray); box-sizing: border-box; font-size: 1rem; }
-        input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); }
-        button { width: 100%; background-color: var(--primary-color); color: white; padding: 0.75rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.2s ease; }
-        button:hover { background-color: var(--primary-hover); }
-        .footer-link { text-align: center; margin-top: 1.5rem; color: #4b5563; }
-        .footer-link a { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .footer-link a:hover { text-decoration: underline; }
+        :root { --primary-color: #4338ca; --primary-hover: #3730a3; --bg-color: #f8fafc; --card-bg: #ffffff; --text-primary: #1e293b; --text-secondary: #475569; --border-color: #e2e8f0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-primary); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .logo { font-weight: 700; font-size: 1.8em; color: var(--text-primary); text-decoration: none; margin-bottom: 30px; }
+        .auth-card { background-color: var(--card-bg); padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; box-sizing: border-box; }
+        .auth-card h1 { text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 1.8em; }
+        .alert-error { background-color: #fee2e2; color: #991b1b; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-sizing: border-box; font-size: 1em; }
+        .btn { width: 100%; background-color: var(--primary-color); color: white; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; transition: background-color 0.2s; }
+        .btn:hover { background-color: var(--primary-hover); }
+        .footer-link { text-align: center; margin-top: 25px; color: var(--text-secondary); }
+        .footer-link a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
     </style>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
+    <a href="{{ url_for('index') }}" class="logo">Smart Secure Reviews</a>
+    <div class="auth-card">
         <h1>Create Your Account</h1>
-         {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
                     {% if category == 'error' %}
-                    <div class="flash-error">{{ message }}</div>
+                        <div class="alert-error">{{ message }}</div>
                     {% endif %}
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('signup') }}">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Sign Up</button>
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
         </form>
-        <p class="footer-link">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
+        <div class="footer-link">
+            Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+        </div>
     </div>
 </body>
 </html>
