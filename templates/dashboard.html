@@ -49,16 +49,21 @@
         .alert-error { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
         .alert-success { background-color: #dcfce7; color: #14532d; border-color: #bbf7d0; }
 
-        .links-section {
+        .links-section, .settings-section {
             background-color: var(--card-bg);
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 30px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
-        .links-section h2 { margin-top: 0; }
+        .links-section h2, .settings-section h2 { margin-top: 0; }
         .link-box { background-color: #f1f5f9; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', Courier, monospace; word-wrap: break-word; }
         
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary); }
+        .form-group input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-sizing: border-box; font-size: 1em; background-color: #f8fafc; }
+        .form-group input[type="text"]:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(67, 56, 202, 0.2); }
+
         .testimonial-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 20px; background-color: var(--card-bg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05); }
         .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .author-name { font-size: 1.25em; font-weight: 600; color: var(--text-primary); }
@@ -101,39 +106,71 @@
             {% endif %}
         {% endwith %}
 
-        {% if current_user.subscription_status != 'active' %}
-        <div class="links-section">
-            <h2>Activate Your Account</h2>
-            <p>To get your links and display testimonials, please subscribe.</p>
-            <a href="{{ url_for('create_checkout_session') }}" class="btn btn-primary">Subscribe Now</a>
-        </div>
-        {% else %}
-        <div class="links-section">
-            <h2>Your Links</h2>
-            <p><strong>Your Public Wall URL:</strong></p>
-            <div class="link-box">{{ url_for('show_wall', user_id=current_user.id, _external=True) }}</div>
-            <p><strong>Your Collection Link (Send to clients):</strong></p>
-            <div class="link-box" id="submission-link">{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}</div>
-        </div>
+        <!-- This is the main logic block -->
+        {% if current_user.subscription_status == 'lifetime' %}
+            <div class="links-section">
+                <h2>Lifetime Access Unlocked!</h2>
+                <p>You have free, unlimited access to Testimonial Wall.</p>
+            </div>
+        {% elif current_user.subscription_status == 'active' %}
+             <div class="links-section">
+                <h2>Your Links</h2>
+                <p><strong>Your Public Wall URL:</strong></p>
+                <div class="link-box">{{ url_for('show_wall', user_id=current_user.id, _external=True) }}</div>
+                <p><strong>Your Collection Link (Send to clients):</strong></p>
+                <div class="link-box" id="submission-link">{{ url_for('collect_testimonial', user_id=current_user.id, _external=True) }}</div>
+            </div>
+        {% else %} {# This covers 'inactive' and any other status #}
+            <div class="links-section">
+                <h2>Activate Your Account</h2>
+                <p>To get your links and display testimonials, subscribe or redeem a code.</p>
+                <a href="{{ url_for('create_checkout_session') }}" class="btn btn-primary">Subscribe Now</a>
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 20px 0;">
+                <form action="{{ url_for('redeem_code') }}" method="POST" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="promo_code">Have a Lifetime Code?</label>
+                        <input type="text" id="promo_code" name="promo_code" placeholder="Enter code here" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Redeem Code</button>
+                </form>
+            </div>
         {% endif %}
+
+        
+        {% if current_user.subscription_status in ['active', 'lifetime'] %}
+        <div class="settings-section">
+            <h2>Wall Settings</h2>
+            <form action="{{ url_for('update_wall_settings') }}" method="POST">
+                <div class="form-group">
+                    <label for="wall_title">Custom Wall Title</label>
+                    <input type="text" id="wall_title" name="wall_title" value="{{ current_user.wall_title or '' }}" placeholder="e.g., What Our Customers Say">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        </div>
         
         <!-- Testimonials List -->
         {% for testimonial in testimonials %}
         <div class="testimonial-card">
             <div class="testimonial-header">
                 <span class="author-name">{{ testimonial.author_name }}</span>
-                {% if testimonial.status == 'approved' %}
-                    <span class="status status-approved">Approved</span>
-                {% elif testimonial.status == 'hidden' %}
-                    <span class="status status-hidden">Hidden</span>
-                {% else %}
-                    <span class="status status-pending">Pending</span>
+                 {% if testimonial.rating %}
+                <div style="color: #f59e0b; font-size: 1.2em;">
+                    {% for i in range(testimonial.rating) %}★{% endfor %}{% for i in range(5 - testimonial.rating) %}☆{% endfor %}
+                </div>
                 {% endif %}
             </div>
             <div class="testimonial-content">
                 <p>"{{ testimonial.content }}"</p>
             </div>
             <div class="actions">
+                 {% if testimonial.status == 'approved' %}
+                    <span class="status status-approved">Approved</span>
+                {% elif testimonial.status == 'hidden' %}
+                    <span class="status status-hidden">Hidden</span>
+                {% else %}
+                    <span class="status status-pending">Pending</span>
+                {% endif %}
                 <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Approve</a>
                 <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Hide</a>
                 <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn-logout">Delete</a>
@@ -142,6 +179,8 @@
         {% else %}
         <p>No testimonials submitted yet.</p>
         {% endfor %}
+        {% endif %}
+
     </div>
 
     <!-- Embed Instructions Modal -->
@@ -184,15 +223,21 @@
         };
 
         // Event Listeners
-        embedBtn.addEventListener('click', openModal);
-        closeModalBtn.addEventListener('click', closeModal);
+        if (embedBtn) {
+            embedBtn.addEventListener('click', openModal);
+        }
+        if(closeModalBtn) {
+            closeModalBtn.addEventListener('click', closeModal);
+        }
         
         // Also close modal if user clicks on the overlay
-        embedModal.addEventListener('click', (event) => {
-            if (event.target === embedModal) {
-                closeModal();
-            }
-        });
+        if(embedModal){
+            embedModal.addEventListener('click', (event) => {
+                if (event.target === embedModal) {
+                    closeModal();
+                }
+            });
+        }
     </script>
 </body>
 </html>
