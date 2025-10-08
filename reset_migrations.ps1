@@ -31,7 +31,6 @@ Write-Host "-------------------------------------------"
 Write-Host "SUCCESS! Your local database is reset and the fix has been pushed to GitHub."
 Write-Host "You can now redeploy on Render."
 Write-Host "-------------------------------------------"
-```
 
     
 
