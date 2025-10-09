@@ -282,4 +282,14 @@ def redeem_code():
     db.session.commit()
     flash('Congratulations! You now have free lifetime access.', 'success')
     return redirect(url_for('dashboard'))
+@app.route('/healthz')
+def health_check():
+    """
+    This is a simple health check endpoint that Render can use.
+    It just returns a simple "OK" message to let Render know the app has started.
+    """
+    return "OK", 200
 
+if __name__ == '__main__':
+    # This block is for local development only
+    app.run(debug=True)
