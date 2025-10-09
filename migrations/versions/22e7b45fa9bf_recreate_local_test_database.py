@@ -1,8 +1,8 @@
-"""Create final production schema
+"""Recreate local test database
 
-Revision ID: 4ee337ae59af
+Revision ID: 22e7b45fa9bf
 Revises: 
-Create Date: 2025-10-08 21:20:54.977672
+Create Date: 2025-10-09 16:08:15.656493
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4ee337ae59af'
+revision = '22e7b45fa9bf'
 down_revision = None
 branch_labels = None
 depends_on = None

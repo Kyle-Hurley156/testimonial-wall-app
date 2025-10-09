@@ -5,73 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Smart Secure Reviews</title>
     <style>
-        :root {
-            --primary-color: #4338ca;
-            --primary-hover: #3730a3;
-            --secondary-color: #e2e8f0;
-            --secondary-hover: #cbd5e1;
-            --danger-color: #dc2626;
-            --danger-hover: #b91c1c;
-            --success-color: #16a34a;
-            --success-hover: #15803d;
-            --warning-color: #f59e0b;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-        }
+        :root { --primary-color: #4338ca; --primary-hover: #3730a3; --secondary-color: #e2e8f0; --secondary-hover: #cbd5e1; --danger-color: #dc2626; --danger-hover: #b91c1c; --success-color: #16a34a; --success-hover: #15803d; --warning-color: #f59e0b; --bg-color: #f1f5f9; --card-bg: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b; --border-color: #e2e8f0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-primary); margin: 0; }
         .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
-        .dashboard-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-        .header-title { font-size: 1.8em; font-weight: 700; margin: 0; }
+        .dashboard-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; padding: 20px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .logo { font-weight: 700; font-size: 1.5em; color: var(--text-primary); text-decoration: none; }
         .header-actions { display: flex; gap: 10px; }
-        .btn { font-size: 0.9em; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s; }
-        .btn-secondary { background-color: var(--secondary-color); color: var(--text-primary); }
-        .btn-secondary:hover { background-color: var(--secondary-hover); }
-        .btn-logout { background-color: var(--danger-color); color: white; }
-        .btn-logout:hover { background-color: var(--danger-hover); }
-        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .card h2 { font-size: 1.5em; margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
-        .input-group { display: flex; gap: 10px; }
-        .form-control { width: 100%; padding: 12px; font-size: 1em; border: 1px solid var(--border-color); border-radius: 8px; background-color: #f8fafc; }
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; font-weight: 600; text-align: center; transition: background-color 0.2s; }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-primary:hover { background-color: var(--primary-hover); }
-        .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; }
-        .alert-success { background-color: #d1fae5; color: #065f46; }
-        .alert-error { background-color: #fee2e2; color: #991b1b; }
-        .testimonial-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .testimonial-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .author-info { font-size: 1.2em; font-weight: 600; }
-        .status { padding: 5px 12px; border-radius: 9999px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; }
-        .status-pending { background-color: #fefce8; color: #a16207; }
-        .status-approved { background-color: #dcfce7; color: #166534; }
-        .status-hidden { background-color: #f1f5f9; color: #475569; }
-        .testimonial-content { color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
-        .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-secondary { background-color: var(--secondary-color); color: var(--text-primary); }
+        .btn-secondary:hover { background-color: var(--secondary-hover); }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        .card { background-color: var(--card-bg); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-control { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-sizing: border-box; font-size: 16px; }
+        .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(67, 56, 202, 0.2); }
+        .testimonial-card { display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid var(--border-color); padding: 20px 0; }
+        .testimonial-card:last-child { border-bottom: none; }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: center; }
+        .author-name { font-size: 1.1em; font-weight: 600; }
+        .status { padding: 5px 10px; border-radius: 9999px; font-size: 0.8em; font-weight: 500; text-transform: uppercase; }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-approved { background-color: #d1fae5; color: #065f46; }
+        .status-hidden { background-color: #e2e8f0; color: #475569; }
+        .testimonial-content p { margin: 0; color: var(--text-secondary); line-height: 1.6; }
+        .testimonial-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .stars { color: #f59e0b; }
+        .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid transparent; }
+        .alert-success { background-color: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+        .alert-error { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; position: relative; }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal h2 { margin-top: 0; }
+        .modal p { line-height: 1.7; color: var(--text-secondary); }
+        .modal code { background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <header class="dashboard-header">
-            <h1 class="header-title">Dashboard</h1>
+            <a href="{{ url_for('index') }}" class="logo">Smart Secure Reviews</a>
             <div class="header-actions">
-                <a href="#" class="btn btn-secondary">How to Embed</a>
-                <a href="{{ url_for('manage_subscription') }}" class="btn btn-secondary">Manage Billing</a>
-                <a href="{{ url_for('logout') }}" class="btn btn-logout">Log Out</a>
+                <button id="embedBtn" class="btn btn-secondary">How to Embed</button>
+                {% if current_user.subscription_status == 'active' %}
+                    <a href="{{ url_for('manage_subscription') }}" class="btn btn-secondary">Manage Billing</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">Log Out</a>
             </div>
         </header>
 
@@ -86,112 +72,127 @@
         {% if current_user.subscription_status == 'inactive' %}
         <div class="card">
             <h2>Activate Your Account</h2>
-            <p>Subscribe now to display testimonials and get your public links.</p>
-            <a href="{{ url_for('create_checkout_session') }}" class="btn btn-primary">Subscribe Now</a>
-            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 30px 0;">
-            <form action="{{ url_for('redeem_code') }}" method="POST">
-                <div class="form-group">
-                    <label for="promo_code">Have a Code?</label>
-                    <div class="input-group">
-                        <input type="text" id="promo_code" name="promo_code" class="form-control" placeholder="Enter your code" required>
-                        <button type="submit" class="btn btn-secondary">Redeem</button>
-                    </div>
-                </div>
-            </form>
+            <p>To collect testimonials and display your wall, please subscribe or enter a code.</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                <a href="{{ url_for('create_checkout_session') }}" class="btn btn-primary" style="flex-grow: 1;">Subscribe Now</a>
+                <form action="{{ url_for('redeem_code') }}" method="POST" style="flex-grow: 1; display: flex; gap: 10px;">
+                    <input type="text" name="promo_code" placeholder="Enter Code" class="form-control" required>
+                    <button type="submit" class="btn btn-secondary">Redeem</button>
+                </form>
+            </div>
         </div>
-        {% elif current_user.subscription_status in ['active', 'lifetime'] %}
+        {% else %}
         <div class="card">
-             {% if current_user.subscription_status == 'lifetime' %}
-                <h2>Lifetime Access Unlocked!</h2>
-             {% endif %}
             <h2>Your Links</h2>
             <div class="form-group">
-                <label for="collection-link">Your Collection Link</label>
-                <div class="input-group">
+                <label for="collection-link">Your Collection Link (Share this with clients)</label>
+                <div style="display: flex; gap: 10px;">
                     <input type="text" id="collection-link" class="form-control" value="{{ url_for('collect_testimonial_public', user_id=current_user.id, _external=True) }}" readonly>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('collection-link', this)">Copy</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('collection-link')">Copy</button>
                 </div>
-                <small style="color: var(--text-secondary);">Send this link to your clients for them to submit a testimonial.</small>
             </div>
             <div class="form-group">
                 <label for="wall-link">Your Public Wall URL</label>
-                 <div class="input-group">
+                 <div style="display: flex; gap: 10px;">
                     <input type="text" id="wall-link" class="form-control" value="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" readonly>
-                    <button class="btn btn-secondary" onclick="copyToClipboard('wall-link', this)">Copy</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('wall-link')">Copy</button>
                 </div>
-                <small style="color: var(--text-secondary);">This is the direct link to your public wall of testimonials.</small>
             </div>
         </div>
         {% endif %}
-
+        
         <div class="card">
             <h2>Wall Settings</h2>
             <form action="{{ url_for('update_wall_settings') }}" method="POST">
                 <div class="form-group">
                     <label for="wall_title">Custom Wall Title</label>
-                    <input type="text" id="wall_title" name="wall_title" class="form-control" placeholder="e.g., What Our Customers Say" value="{{ current_user.wall_title or '' }}">
+                    <input type="text" id="wall_title" name="wall_title" class="form-control" value="{{ current_user.wall_title or '' }}" placeholder="e.g., What Our Customers Say">
                 </div>
                 <button type="submit" class="btn btn-primary">Save Settings</button>
             </form>
         </div>
 
-        <h2>Manage Testimonials</h2>
-        {% for testimonial in testimonials %}
+        <div class="card">
+            <h2>Your Testimonials</h2>
+            {% for testimonial in testimonials %}
             <div class="testimonial-card">
                 <div class="testimonial-header">
-                    <div class="author-info">
-                        {{ testimonial.author_name }}
-                        {% if testimonial.rating %}
-                            <span style="color: #f59e0b; margin-left: 10px;">{{ '★' * testimonial.rating }}{{ '☆' * (5 - testimonial.rating) }}</span>
-                        {% endif %}
-                    </div>
-                     {% if testimonial.status == 'approved' %}
+                    <span class="author-name">{{ testimonial.author_name }}</span>
+                    {% if testimonial.status == 'approved' %}
                         <span class="status status-approved">Approved</span>
-                    {% elif testimonial.status == 'hidden' %}
-                        <span class="status status-hidden">Hidden</span>
-                    {% else %}
+                    {% elif testimonial.status == 'pending' %}
                         <span class="status status-pending">Pending</span>
+                    {% else %}
+                         <span class="status status-hidden">Hidden</span>
                     {% endif %}
                 </div>
+                {% if testimonial.rating %}
+                <div class="stars">
+                    {% for i in range(testimonial.rating) %}★{% endfor %}{% for i in range(5 - testimonial.rating) %}☆{% endfor %}
+                </div>
+                {% endif %}
                 <div class="testimonial-content">
                     <p>"{{ testimonial.content }}"</p>
                 </div>
-                <div class="actions">
+                <div class="testimonial-actions">
                     <a href="{{ url_for('approve_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Approve</a>
                     <a href="{{ url_for('hide_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-secondary">Hide</a>
-                    <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-logout">Delete</a>
+                    <a href="{{ url_for('delete_testimonial', testimonial_id=testimonial.id) }}" class="btn btn-danger">Delete</a>
                 </div>
             </div>
-        {% else %}
-            <p>No testimonials submitted yet.</p>
-        {% endfor %}
+            {% else %}
+            <p style="text-align: center; color: var(--text-secondary); padding: 20px 0;">No testimonials submitted yet.</p>
+            {% endfor %}
+        </div>
+    </div>
 
+    <!-- The Modal -->
+    <div id="embedModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>How to Embed Your Wall</h2>
+        <p>Embedding your testimonial wall on your website is easy! It works with Squarespace, Wix, WordPress, Webflow, or any website builder that allows you to add custom HTML.</p>
+        <p><strong>Step 1:</strong> Go to the page on your website editor where you want the testimonials to appear.</p>
+        <p><strong>Step 2:</strong> Add a new "Code Block," "HTML Block," or "Embed" element to your page.</p>
+        <p><strong>Step 3:</strong> Copy the code below and paste it into the block.</p>
+        <div class="form-group">
+            <label for="embed-code">Your Embed Code</label>
+             <div style="display: flex; gap: 10px;">
+                <input type="text" id="embed-code" class="form-control" value='<iframe src="{{ url_for('show_wall', user_id=current_user.id, _external=True) }}" width="100%" height="600px" style="border:none;" title="Customer Testimonials"></iframe>' readonly>
+                <button class="btn btn-secondary" onclick="copyToClipboard('embed-code')">Copy</button>
+            </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        function copyToClipboard(elementId, buttonElement) {
+        function copyToClipboard(elementId) {
             const input = document.getElementById(elementId);
             input.select();
             input.setSelectionRange(0, 99999); // For mobile devices
-
             try {
-                // Use the modern clipboard API if available
-                navigator.clipboard.writeText(input.value).then(() => {
-                    const originalText = buttonElement.innerText;
-                    buttonElement.innerText = 'Copied!';
-                    setTimeout(() => {
-                        buttonElement.innerText = originalText;
-                    }, 2000);
-                });
-            } catch (err) {
-                // Fallback for older browsers
                 document.execCommand('copy');
-                const originalText = buttonElement.innerText;
-                buttonElement.innerText = 'Copied!';
-                setTimeout(() => {
-                    buttonElement.innerText = originalText;
-                }, 2000);
+                // Optional: Show a "Copied!" message
+            } catch (err) {
+                console.error('Failed to copy: ', err);
             }
+        }
+
+        // Modal JavaScript
+        const modal = document.getElementById("embedModal");
+        const btn = document.getElementById("embedBtn");
+        const span = document.getElementsByClassName("close-btn")[0];
+
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
         }
     </script>
 </body>
