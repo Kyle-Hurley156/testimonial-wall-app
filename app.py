@@ -85,12 +85,11 @@ def signup():
             flash('Email address already exists.', 'error')
             return redirect(url_for('signup'))
         
-        # Create customer in Stripe
         try:
             customer = stripe.Customer.create(email=email)
             stripe_customer_id = customer.id
         except Exception as e:
-            flash(f'Could not connect to payment provider. Please try again later. Error: {e}', 'error')
+            flash(f'Could not connect to payment provider. Error: {e}', 'error')
             return redirect(url_for('signup'))
 
         new_user = User(email=email, stripe_customer_id=stripe_customer_id)
@@ -168,7 +167,7 @@ def delete_testimonial(testimonial_id):
 
 # --- PUBLIC SUBMISSION ROUTES ---
 @app.route('/collect/<int:user_id>')
-def public_submit_page(user_id):
+def collect_testimonial_public(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('submit.html', user=user)
 
@@ -204,12 +203,11 @@ def create_checkout_session():
             mode='subscription',
             success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=url_for('cancel', _external=True),
-            customer=current_user.stripe_customer_id
+            customer=current_user.stripe_customer_id,
         )
-        return redirect(checkout_session.url, code=303)
     except Exception as e:
-        flash(f'Error creating payment session: {e}', 'error')
-        return redirect(url_for('dashboard'))
+        return str(e)
+    return redirect(checkout_session.url, code=303)
 
 @app.route('/success')
 @login_required
@@ -231,28 +229,14 @@ def manage_subscription():
     try:
         session = stripe.billing_portal.Session.create(
             customer=current_user.stripe_customer_id,
-            return_url=url_for('dashboard', _external=True)
+            return_url=url_for('dashboard', _external=True),
         )
         return redirect(session.url)
     except Exception as e:
-        flash(f'Could not open billing portal. Error: {e}', 'error')
+        flash(f'Error accessing billing portal: {e}', 'error')
         return redirect(url_for('dashboard'))
 
-# --- ADMIN & PROMO CODE ROUTES ---
-@app.route('/admin/<string:secret_key>', methods=['GET', 'POST'])
-def admin(secret_key):
-    if secret_key != ADMIN_KEY:
-        return "Unauthorized", 403
-    if request.method == 'POST':
-        new_code = PromoCode(code=secrets.token_urlsafe(8).upper())
-        db.session.add(new_code)
-        db.session.commit()
-        flash(f'New code generated: {new_code.code}', 'success')
-        return redirect(url_for('admin', secret_key=secret_key))
-    
-    all_codes = PromoCode.query.order_by(PromoCode.id.desc()).all()
-    return render_template('admin.html', codes=all_codes)
-
+# --- PROMO CODE ROUTES ---
 @app.route('/redeem-code', methods=['POST'])
 @login_required
 def redeem_code():
@@ -276,4 +260,20 @@ def redeem_code():
     db.session.commit()
     flash('Congratulations! You now have free lifetime access.', 'success')
     return redirect(url_for('dashboard'))
+
+# --- ADMIN ROUTE ---
+@app.route('/admin/<secret_key>', methods=['GET', 'POST'])
+def admin(secret_key):
+    if secret_key != ADMIN_KEY:
+        return "Unauthorized", 403
+    
+    if request.method == 'POST':
+        new_code = PromoCode(code=secrets.token_urlsafe(8).upper())
+        db.session.add(new_code)
+        db.session.commit()
+        flash(f'New code generated: {new_code.code}', 'success')
+        return redirect(url_for('admin', secret_key=secret_key))
+    
+    all_codes = PromoCode.query.order_by(PromoCode.id.desc()).all()
+    return render_template('admin.html', codes=all_codes)
 
